@@ -49,24 +49,18 @@ async function createWindow() {
 ipcMain.on('scrape-cert', (event, arg) => { //listen for msg from renderer (app.vue)
   // getCerts()
   console.log('here 001', arg)
+    checkCert().then(function() { console.log('well we tried') });
+      console.log('---- starting!');
 
-    getCerts( (err) => {
-      console.log(err)
-      if (arg === 'ping'){
-        return event.sender.send('reply','pong') //send reply back to renderer
+      async function checkCert() {
+        console.log('try to get cert');
+        let FedUid = await getCerts();
+        console.log('fed id?', FedUid);
       }
-    });
- 
-    // checkCert().then(function() { console.log('well we tried') });
-    //   console.log('---- starting!');
 
-    //   async function checkCert() {
-    //     console.log('try to get cert');
-    //     let FedUid = await getCerts();
-    //     console.log('fed id?', FedUid);
-    //   }
-
-    
+    if (arg === 'ping'){
+      return event.sender.send('reply','pong') //send reply back to renderer
+    }
 });
 
 // Quit when all windows are closed.
