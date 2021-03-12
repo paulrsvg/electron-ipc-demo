@@ -27,24 +27,24 @@ async function createWindow() {
       preload: path.join(__dirname, 'preload.js')
     }
   })
-  win.webContents.on('did-finish-load', () => {
+  // win.webContents.on('did-finish-load', () => {
 
-    checkCert().then(function() {
-       console.log('well we tried') 
-       console.log('fed id yet', FedUid);
-      });
-      console.log('---- starting!');
+  //   checkCert().then(function() {
+  //      console.log('well we tried') 
+  //      console.log('fed id yet', FedUid);
+  //     });
+  //     console.log('---- starting!');
 
-      async function checkCert() {
-        console.log('try to get cert');
-        FedUid = await getCerts();
-        console.log('fed id yet', FedUid);
-      }
-    if (FedUid) {
-      win.webContents.send('got-cert', FedUid)
-    }
+  //     async function checkCert() {
+  //       console.log('try to get cert');
+  //       FedUid = await getCerts();
+  //       console.log('fed id yet', FedUid);
+  //     }
+  //   if (FedUid) {
+  //     win.webContents.send('got-cert', FedUid)
+  //   }
 
-  })
+  // })
   
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -88,7 +88,7 @@ ipcMain.on('scrape-cert', (event, arg) => { //listen for msg from renderer (app.
 
 ipcMain.on('got-cert', (event, arg) => { //listen for msg from renderer (app.vue)
   // getCerts()
-  console.log('here 003', arg)
+  console.log('here 004', arg)
     
     // if (arg === 'ping'){
     //   // console.log('fed id?', FedUid);

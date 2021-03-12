@@ -9,7 +9,7 @@ function getCerts() {
     const path = require("path");
     const forge = require('node-forge')
     const moment = require('moment')
-     const { BrowserWindow } = require('electron')
+    const { BrowserWindow } = require('electron')
     
     // feduid = 'hi feds' //call first time, doesn't show right away, call 2nd time to grab it? hmm
     let feduid
@@ -17,8 +17,6 @@ function getCerts() {
 
     fetch()
         .then(passList)
-        .then(passId)
-        // .then(function(result))
     
     function fetch() {
         var list = []
@@ -39,22 +37,15 @@ function getCerts() {
     function passList(list) {
         var d = Date.now();
     
-        let timer = setInterval(_ => {
-            clearInterval(timer)
-        }, 1000)
+        // let timer = setInterval(_ => {
+        //     clearInterval(timer)
+        // }, 1000)
         scrapeCerts(list, d)
         console.log ('passlist hey?', feduid) //this works yay
         BrowserWindow.getFocusedWindow().webContents.send('got-cert', feduid); //send to current electron window
-        return feduid
+        // return feduid
     }
 
-    function passId(id){
-        console.log('id check?', id)
-        return id
-    }
-    
-    
-    
     function scrapeCerts(roots, date) {
         for (let pem of roots) {
             cert = forge.pki.certificateFromPem(pem)
@@ -99,7 +90,7 @@ function getCerts() {
             }
         }
     }
-        return feduid
+        // return feduid
     }
     
     module.exports = getCerts;
