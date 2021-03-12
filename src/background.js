@@ -6,6 +6,7 @@ import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const path = require("path");
 import getCerts from './get-certs'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+let FedUid    
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -26,6 +27,25 @@ async function createWindow() {
       preload: path.join(__dirname, 'preload.js')
     }
   })
+  win.webContents.on('did-finish-load', () => {
+
+    checkCert().then(function() {
+       console.log('well we tried') 
+       console.log('fed id yet', FedUid);
+      });
+      console.log('---- starting!');
+
+      async function checkCert() {
+        console.log('try to get cert');
+        FedUid = await getCerts();
+        console.log('fed id yet', FedUid);
+      }
+    if (FedUid) {
+      win.webContents.send('got-cert', FedUid)
+    }
+
+  })
+  
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -44,7 +64,7 @@ async function createWindow() {
 
 //   getCerts()
 //       win.webContents.send('certs')
-// })
+// })    
 
 ipcMain.on('scrape-cert', (event, arg) => { //listen for msg from renderer (app.vue)
   // getCerts()
@@ -54,13 +74,27 @@ ipcMain.on('scrape-cert', (event, arg) => { //listen for msg from renderer (app.
 
       async function checkCert() {
         console.log('try to get cert');
-        let FedUid = await getCerts();
-        console.log('fed id?', FedUid);
+        let tempFedUid = await getCerts();
+        console.log('fed id try2?', tempFedUid);
       }
 
     if (arg === 'ping'){
+      // console.log('fed id?', FedUid);
+      // console.log('sending to:', event.sender)
       return event.sender.send('reply','pong') //send reply back to renderer
     }
+    console.log('new arg', arg)
+});
+
+ipcMain.on('got-cert', (event, arg) => { //listen for msg from renderer (app.vue)
+  // getCerts()
+  console.log('here 003', arg)
+    
+    // if (arg === 'ping'){
+    //   // console.log('fed id?', FedUid);
+    //   return event.sender.send('reply','pong') //send reply back to renderer
+    // }
+    console.log('new arg', arg)
 });
 
 // Quit when all windows are closed.

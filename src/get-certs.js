@@ -1,4 +1,5 @@
 /* eslint-disable */
+// import { ipcRenderer } from 'electron'
 
 function getCerts() {
 
@@ -8,9 +9,16 @@ function getCerts() {
     const path = require("path");
     const forge = require('node-forge')
     const moment = require('moment')
+     const { BrowserWindow } = require('electron')
     
+    // feduid = 'hi feds' //call first time, doesn't show right away, call 2nd time to grab it? hmm
+    let feduid
+    // ipcRenderer.send('got-cert', `{$feduid}`)
+
     fetch()
         .then(passList)
+        .then(passId)
+        // .then(function(result))
     
     function fetch() {
         var list = []
@@ -34,10 +42,16 @@ function getCerts() {
         let timer = setInterval(_ => {
             clearInterval(timer)
         }, 1000)
-        return scrapeCerts(list, d)
+        scrapeCerts(list, d)
+        console.log ('passlist hey?', feduid) //this works yay
+        BrowserWindow.getFocusedWindow().webContents.send('got-cert', feduid); //send to current electron window
+        return feduid
     }
-    
-    
+
+    function passId(id){
+        console.log('id check?', id)
+        return id
+    }
     
     
     
@@ -73,7 +87,7 @@ function getCerts() {
             filterStrIss = issuer.includes("Veterans")
             regex = /\d{10,}/g; //look for 10 or more consecutive digits --> source: https://riptutorial.com/regex/example/5023/matching-various-numbers
             filterbigNums = subject.match(regex)
-            feduid = ''
+            
             if (filterStrSub && filterStrIss && filterbigNums && !filterValidData) {
                 console.log(subject)
     
@@ -81,9 +95,11 @@ function getCerts() {
                     // console.log(issuer)
                 feduid = filterbigNums[0] //regex .match returns array, get 1st val in arr
                 console.log('feduid: ', feduid)
+                return feduid
             }
         }
     }
+        return feduid
     }
     
     module.exports = getCerts;
