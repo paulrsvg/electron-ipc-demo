@@ -3,7 +3,7 @@
 import { ipcRenderer } from 'electron'
 window.ipcRenderer = ipcRenderer
 // const {ipcRenderer} = window.require('electron')
-
+console.log ('preload worked');
 // alert("Preload Worked!") // this is a ui pop up coming from ipc yay. 
 
 
